@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sex Simulator</title>
+    <style>
+      :root {
+        --bg1: #110b17;
+        --bg2: #1a1028;
+        --panel: rgba(30, 20, 42, 0.88);
+        --panel-strong: rgba(41, 27, 53, 0.96);
+        --glow: #ff4db8;
+        --pink: #ff79d2;
+        --rose: #ff9ed5;
+        --gold: #ffd56f;
+        --mint: #7fffd4;
+        --cyan: #79d7ff;
+        --text: #f5ebff;
+        --muted: #c9bbd8;
+        --danger: #ff6b8f;
+        --success: #a1ffb2;
+        --shadow: rgba(0, 0, 0, 0.45);
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: Inter, "Segoe UI", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(255, 77, 184, 0.22), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(121, 215, 255, 0.18), transparent 26%),
+          linear-gradient(135deg, var(--bg1), var(--bg2));
+      }
+
+      body {
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .app {
+        width: min(980px, 100%);
+        background: rgba(17, 12, 22, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        box-shadow: 0 30px 80px var(--shadow);
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        padding: 18px 20px 10px;
+        background: rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .brand {
+        line-height: 1.1;
+      }
+
+      .brand h1 {
+        margin: 0;
+        font-size: clamp(1.8rem, 3vw, 2.8rem);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .brand small {
+        display: block;
+        color: var(--muted);
+        margin-top: 4px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+      }
+
+      .hud {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .pill {
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.76rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 1.5fr 0.95fr;
+        gap: 18px;
+        padding: 18px 20px 20px;
+      }
+
+      .scene {
+        position: relative;
+        min-height: 560px;
+        border-radius: 20px;
+        background:
+          radial-gradient(circle at 50% 18%, rgba(255, 180, 225, 0.18), transparent 20%),
+          linear-gradient(180deg, rgba(31, 20, 40, 0.96), rgba(18, 13, 23, 1));
+        border: 1px solid rgba(255,255,255,0.08);
+        overflow: hidden;
+      }
+
+      .skyline {
+        position: absolute;
+        inset: 0 0 0 0;
+        background:
+          linear-gradient(180deg, rgba(106, 67, 138, 0.38), rgba(17, 11, 22, 0.15) 48%, rgba(10, 8, 18, 0.82)),
+          radial-gradient(circle at 50% 18%, rgba(255, 164, 214, 0.3), transparent 20%);
+      }
+
+      .city {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 140px;
+        height: 170px;
+        opacity: 0.7;
+        background:
+          linear-gradient(180deg, rgba(255, 94, 160, 0.18), rgba(255, 94, 160, 0.04)),
+          repeating-linear-gradient(
+            90deg,
+            rgba(255,255,255,0.08) 0,
+            rgba(255,255,255,0.08) 2px,
+            transparent 2px,
+            transparent 30px
+          );
+        mask-image: linear-gradient(180deg, rgba(0,0,0,1), rgba(0,0,0,0.25));
+      }
+
+      .stage {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        padding-bottom: 58px;
+      }
+
+      .character {
+        position: relative;
+        width: 220px;
+        height: 290px;
+        filter: drop-shadow(0 25px 40px rgba(0,0,0,0.35));
+        transform: translateY(0);
+        transition: transform 0.24s ease;
+      }
+
+      .head {
+        position: absolute;
+        width: 78px;
+        height: 78px;
+        left: 50%;
+        top: 18px;
+        transform: translateX(-50%);
+        border-radius: 50%;
+        background: linear-gradient(180deg, #f7d8c7, #e5a7a1);
+        box-shadow: inset -10px -8px 0 rgba(130, 72, 75, 0.12);
+      }
+
+      .hair {
+        position: absolute;
+        width: 88px;
+        height: 44px;
+        left: 50%;
+        top: 8px;
+        transform: translateX(-50%);
+        border-radius: 50% 50% 20% 20%;
+        background: linear-gradient(180deg, #2f183c, #541d58);
+      }
+
+      .eyes {
+        position: absolute;
+        top: 46px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 48px;
+        height: 12px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .eye {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #2e1a33;
+      }
+
+      .body {
+        position: absolute;
+        left: 50%;
+        top: 92px;
+        transform: translateX(-50%);
+        width: 118px;
+        height: 116px;
+        background: linear-gradient(180deg, #ff8dd3, #ed5bb3);
+        border-radius: 28px 28px 20px 20px;
+      }
+
+      .arm {
+        position: absolute;
+        width: 18px;
+        height: 96px;
+        top: 98px;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #f7d8c7, #e3a796);
+      }
+
+      .arm.left { left: 46px; transform: rotate(20deg); }
+      .arm.right { right: 46px; transform: rotate(-20deg); }
+
+      .hips {
+        position: absolute;
+        left: 50%;
+        top: 198px;
+        transform: translateX(-50%);
+        width: 126px;
+        height: 62px;
+        background: linear-gradient(180deg, #ffb6dc, #e678cc);
+        border-radius: 22px 22px 18px 18px;
+      }
+
+      .legs {
+        position: absolute;
+        left: 50%;
+        top: 256px;
+        transform: translateX(-50%);
+        width: 96px;
+        height: 100px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .leg {
+        width: 18px;
+        height: 100%;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #f5d4c6, #d49b8d);
+      }
+
+      .character.celebrate { animation: bounce 0.7s infinite ease-in-out; }
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-12px); }
+      }
+
+      .status {
+        position: absolute;
+        left: 24px;
+        right: 24px;
+        top: 24px;
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        pointer-events: none;
+      }
+
+      .meter {
+        min-width: 170px;
+        background: rgba(15, 12, 22, 0.45);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 10px 12px 12px;
+      }
+
+      .label-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      .bar {
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.1);
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        width: 50%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--pink), var(--gold));
+        box-shadow: 0 0 18px rgba(255, 125, 205, 0.8);
+        transition: width 0.2s ease;
+      }
+
+      .side-panel {
+        display: grid;
+        gap: 18px;
+      }
+
+      .panel {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 18px;
+      }
+
+      .panel h2 {
+        margin: 0 0 12px;
+        font-size: 0.82rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+      }
+
+      .story {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--text);
+      }
+
+      .story strong {
+        color: var(--gold);
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        appearance: none;
+        border: 0;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        letter-spacing: 0.04em;
+        padding: 11px 16px;
+        cursor: pointer;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease;
+      }
+
+      button:hover { transform: translateY(-1px); }
+      button:active { transform: translateY(1px); }
+
+      .primary {
+        color: #170d19;
+        background: linear-gradient(135deg, var(--rose), var(--gold));
+        box-shadow: 0 8px 22px rgba(255, 166, 208, 0.42);
+      }
+
+      .secondary {
+        color: var(--text);
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .stat {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 14px;
+        padding: 14px 12px;
+      }
+
+      .stat .k {
+        display: block;
+        color: var(--muted);
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.08em;
+      }
+
+      .stat .v {
+        display: block;
+        margin-top: 8px;
+        font-size: clamp(1.2rem, 2vw, 1.9rem);
+        font-weight: 800;
+      }
+
+      .log {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+        font-size: 0.95rem;
+        color: var(--muted);
+      }
+
+      .log-message {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.06);
+        border-radius: 10px;
+        padding: 10px 12px;
+      }
+
+      .hidden { display: none; }
+
+      @media (max-width: 760px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+
+        .scene {
+          min-height: 460px;
+        }
+
+        .status {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <div class="topbar">
+        <div class="brand">
+          <h1>Sex Simulator</h1>
+          <small>Night Pulse Romance</small>
+        </div>
+        <div class="hud">
+          <div class="pill" id="difficultyPill">Easy Mood</div>
+          <div class="pill" id="turnPill">Turn 1</div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="scene">
+          <div class="skyline"></div>
+          <div class="city"></div>
+          <div class="status">
+            <div class="meter">
+              <div class="label-row"><span>Passion</span><span id="passionLabel">50%</span></div>
+              <div class="bar"><div class="bar-fill" id="passionBar"></div></div>
+            </div>
+            <div class="meter">
+              <div class="label-row"><span>Trust</span><span id="trustLabel">50%</span></div>
+              <div class="bar"><div class="bar-fill" id="trustBar" style="background: linear-gradient(90deg, var(--cyan), var(--mint));"></div></div>
+            </div>
+          </div>
+
+          <div class="stage">
+            <div class="character" id="character">
+              <div class="hair"></div>
+              <div class="head">
+                <div class="eyes">
+                  <div class="eye"></div>
+                  <div class="eye"></div>
+                </div>
+              </div>
+              <div class="arm left"></div>
+              <div class="arm right"></div>
+              <div class="body"></div>
+              <div class="hips"></div>
+              <div class="legs">
+                <div class="leg"></div>
+                <div class="leg"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="side-panel">
+          <div class="panel">
+            <h2>Scene</h2>
+            <div class="story" id="storyText">
+              You step into a neon-lit loft with a slow jazz beat and a smile that says <strong>tonight is yours.</strong>
+            </div>
+            <div class="actions" style="margin-top: 16px;">
+              <button class="primary" id="actionButton">Flirt</button>
+              <button class="secondary" id="nextSceneButton">Change Energy</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Stats</h2>
+            <div class="stats">
+              <div class="stat">
+                <span class="k">Mood</span>
+                <span class="v" id="moodStat">Warm</span>
+              </div>
+              <div class="stat">
+                <span class="k">Spark</span>
+                <span class="v" id="sparkStat">5</span>
+              </div>
+              <div class="stat">
+                <span class="k">Closeness</span>
+                <span class="v" id="closenessStat">0</span>
+              </div>
+              <div class="stat">
+                <span class="k">Goal</span>
+                <span class="v" id="goalStat">7</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Log</h2>
+            <div class="log" id="log"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const state = {
+        turn: 1,
+        passion: 50,
+        trust: 50,
+        spark: 5,
+        closeness: 0,
+        goal: 7,
+        mood: 'Warm',
+        sceneIndex: 0,
+        win: false,
+        lose: false,
+      };
+
+      const scenes = [
+        'You step into a neon-lit loft with a slow jazz beat and a smile that says <strong>tonight is yours.</strong>',
+        'A velvet chair sits beneath a shimmering lamp while the city hums beyond the windows.',
+        'A candle flickers between you, turning every pause into a promise and every glance into a dare.',
+        'The room narrows to one shared breath as the music slides into a softer rhythm.',
+        'A playful challenge glows in the air — the next move decides how deep the night goes.'
+      ];
+
+      const actionMessages = [
+        'You lean in, teasing a soft smile and lighting a spark of anticipation.',
+        'A daring touch lands, and the tension between you turns electric.',
+        'You pause, listen, and let the moment breathe before turning it intimate.',
+        'A warm, confident move makes the room feel instantly closer and more alive.',
+        'You trade flirtation for tenderness, and the energy rises without breaking the mood.'
+      ];
+
+      const rewardTexts = [
+        'The tension blooms into laughter and a deeper sense of ease.',
+        'Your confidence steadies the moment and draws the night closer.',
+        'Both of you melt into the rhythm and the connection starts to feel undeniable.',
+        'The air changes—soft, charged, and impossibly close.',
+        'The room feels like a secret you both want to keep living in.'
+      ];
+
+      const storyText = document.getElementById('storyText');
+      const actionButton = document.getElementById('actionButton');
+      const nextSceneButton = document.getElementById('nextSceneButton');
+      const logEl = document.getElementById('log');
+      const charEl = document.getElementById('character');
+      const moodStat = document.getElementById('moodStat');
+      const sparkStat = document.getElementById('sparkStat');
+      const closenessStat = document.getElementById('closenessStat');
+      const goalStat = document.getElementById('goalStat');
+      const passionBar = document.getElementById('passionBar');
+      const trustBar = document.getElementById('trustBar');
+      const passionLabel = document.getElementById('passionLabel');
+      const trustLabel = document.getElementById('trustLabel');
+      const turnPill = document.getElementById('turnPill');
+      const difficultyPill = document.getElementById('difficultyPill');
+
+      function clamp(v, min = 0, max = 100) {
+        return Math.min(Math.max(v, min), max);
+      }
+
+      function renderBars() {
+        passionBar.style.width = `${state.passion}%`;
+        trustBar.style.width = `${state.trust}%`;
+        passionLabel.textContent = `${state.passion}%`;
+        trustLabel.textContent = `${state.trust}%`;
+      }
+
+      function updateMood() {
+        if (state.trust >= 75 && state.passion >= 70) state.mood = 'Electric';
+        else if (state.trust >= 60 || state.passion >= 60) state.mood = 'Warm';
+        else if (state.trust <= 35 || state.passion <= 35) state.mood = 'Shy';
+        else state.mood = 'Curious';
+        moodStat.textContent = state.mood;
+        sparkStat.textContent = state.spark;
+        closenessStat.textContent = state.closeness;
+        goalStat.textContent = state.goal;
+      }
+
+      function pushLog(message) {
+        const msg = document.createElement('div');
+        msg.className = 'log-message';
+        msg.textContent = message;
+        logEl.prepend(msg);
+        while (logEl.children.length > 5) logEl.removeChild(logEl.lastChild);
+      }
+
+      function setSceneText() {
+        state.sceneIndex = (state.sceneIndex + 1) % scenes.length;
+        storyText.innerHTML = scenes[state.sceneIndex];
+      }
+
+      function applyWinLoseCheck() {
+        if (state.closeness >= state.goal) {
+          state.win = true;
+          actionButton.disabled = true;
+          nextSceneButton.textContent = 'Play Again';
+          actionButton.textContent = 'Perfect Night';
+          storyText.innerHTML = 'The night reaches a perfect, glowing peak. <strong>You and your partner lock into a high, magnetic rhythm and finish on a crescendo of trust and desire.</strong>';
+          charEl.classList.add('celebrate');
+          pushLog('You win: a beautifully synced, unforgettable night.');
+        } else if (state.passion <= 5 && state.trust <= 5) {
+          state.lose = true;
+          actionButton.disabled = true;
+          nextSceneButton.textContent = 'Retry';
+          actionButton.textContent = 'Cold Floor';
+          storyText.innerHTML = 'The room goes quiet. <strong>The energy slips away before it can bloom, and the tension fades into a shy, awkward silence.</strong>';
+          charEl.style.transform = 'translateY(10px)';
+          pushLog('You lose: the connection fizzled before it could ignite.');
+        }
+      }
+
+      function takeAction() {
+        if (state.win || state.lose) return;
+        const boost = Math.floor(Math.random() * 5) + 2;
+        const trustLift = Math.floor(Math.random() * 5) + 1;
+        state.passion = clamp(state.passion + boost - 2);
+        state.trust = clamp(state.trust + trustLift - 1);
+        state.spark = clamp(state.spark + 1, 1, 12);
+        state.closeness += 1;
+        state.turn += 1;
+
+        const actionText = actionMessages[Math.floor(Math.random() * actionMessages.length)];
+        const rewardText = rewardTexts[Math.floor(Math.random() * rewardTexts.length)];
+        storyText.innerHTML = `${actionText} ${rewardText}`;
+        charEl.classList.remove('celebrate');
+        charEl.style.transform = `translateY(${Math.max(-10, 18 - state.trust / 8)}px)`;
+
+        turnPill.textContent = `Turn ${state.turn}`;
+        renderBars();
+        updateMood();
+        pushLog(`Turn ${state.turn - 1}: ${actionText}`);
+        applyWinLoseCheck();
+      }
+
+      function changeScene() {
+        if (state.win || state.lose) {
+          resetGame();
+          return;
+        }
+        const change = Math.floor(Math.random() * 3) + 1;
+        state.passion = clamp(state.passion - change + 2);
+        state.trust = clamp(state.trust + change - 1);
+        state.turn += 1;
+        setSceneText();
+        turnPill.textContent = `Turn ${state.turn}`;
+        renderBars();
+        updateMood();
+        pushLog('The mood shifts and the room opens to a different kind of chemistry.');
+        applyWinLoseCheck();
+      }
+
+      function resetGame() {
+        Object.assign(state, {
+          turn: 1,
+          passion: 50,
+          trust: 50,
+          spark: 5,
+          closeness: 0,
+          goal: 7,
+          mood: 'Warm',
+          sceneIndex: 0,
+          win: false,
+          lose: false,
+        });
+
+        actionButton.disabled = false;
+        actionButton.textContent = 'Flirt';
+        nextSceneButton.textContent = 'Change Energy';
+        storyText.innerHTML = scenes[0];
+        charEl.classList.remove('celebrate');
+        charEl.style.transform = '';
+        turnPill.textContent = 'Turn 1';
+        difficultyPill.textContent = 'Easy Mood';
+        renderBars();
+        updateMood();
+        logEl.innerHTML = '';
+      }
+
+      actionButton.addEventListener('click', takeAction);
+      nextSceneButton.addEventListener('click', changeScene);
+
+      difficultyPill.textContent = 'Easy Mood';
+      renderBars();
+      updateMood();
+      pushLog('The night begins.');
+    </script>
+  </body>
+</html>
