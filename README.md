@@ -16,3 +16,15 @@
 - 👤 [Explore the creator's projects](https://omgithub.com/JankyIvy).
 - 🌍 [Create with OMGithub](https://omgithub.com).
 <!-- omgithub:readme:end -->
+
+## Afterglow
+
+A complete, mobile-friendly 2D romance visual novel. Meet Riley after the last train, make choices, build a connection, and choose how the evening ends. All characters are adults; intimacy is consensual and suggested with a fade-to-black rather than shown.
+
+### Play locally
+
+Open `index.html` in a browser, or serve this folder with `python3 -m http.server 3002` and visit `http://localhost:3002`.
+
+### Controls
+
+Tap or click a dialogue choice to continue the story. The journal keeps a record of your choices, and **Play Again** lets you explore another ending. The game works with touch and mouse; no install or build step is required.

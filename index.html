@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#10131c">
+<title>Afterglow — a little love story</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="game"><section class="shell" aria-label="Afterglow dating sim">
+<div class="world" id="world" aria-hidden="true"><div class="sky-glow"></div><div class="moon"></div><div class="stars" id="stars"></div><div class="city" id="city"></div><div class="rail"></div><div class="roof"></div><div class="plant plant-a">✦</div><div class="plant plant-b">✦</div>
+<div class="character" id="character"><div class="aura"></div><div class="hair"></div><div class="head"><div class="fringe"></div><div class="face"><i class="eye eye-l"></i><i class="eye eye-r"></i><i class="blush blush-l"></i><i class="blush blush-r"></i><i class="mouth"></i></div></div><div class="neck"></div><div class="body"><div class="shirt"></div><div class="collar"></div></div><div class="arm arm-l"></div><div class="arm arm-r"></div></div>
+<div class="scene-tag"><span class="live-dot"></span><span id="scene-label">THE LAST TRAIN</span><span class="tag-divider">/</span><span id="time-label">11:42 PM</span></div></div>
+<header class="topbar"><div class="brand"><span class="brand-mark">✳</span><span>AFTERGLOW</span></div><div class="chapter" id="chapter-label">A LITTLE LOVE STORY</div><button class="icon-btn" id="sound-btn" title="Toggle ambience" aria-label="Toggle ambience">♫</button></header>
+<div class="hud"><div class="mood"><span class="mood-icon">♡</span><div><span class="mood-caption">RILEY'S HEART</span><div class="meter"><i id="meter-fill"></i></div></div><span class="mood-value" id="meter-value">0</span></div><button class="journal-btn" id="journal-btn">☰ <span>JOURNAL</span></button></div>
+<div class="dialogue-wrap" id="dialogue-wrap"><div class="speaker-row"><span class="speaker-dot"></span><span class="speaker" id="speaker">RILEY</span><span class="speaker-note" id="speaker-note">AGE 27 · ARCHITECT</span></div><div class="dialogue" id="dialogue" aria-live="polite"></div><div class="choices" id="choices"></div><button class="continue" id="continue-btn">CONTINUE <span>↗</span></button></div>
+<div class="title-screen" id="title-screen"><div class="title-copy"><div class="eyebrow"><span></span> AN INTERACTIVE ROMANCE · 18+</div><h1>Some nights<br>stay <em>with you.</em></h1><p>A small story about a missed train, a rooftop, and the courage to ask for what you want.</p><div class="name-field"><label for="player-name">WHAT SHOULD RILEY CALL YOU?</label><input id="player-name" maxlength="16" value="Alex" autocomplete="off"></div><button class="primary-btn" id="start-btn">STEP INTO THE NIGHT <span>→</span></button><div class="consent-note">✦ All characters are adults. Romance is consensual, and intimacy is implied—not shown.</div></div><div class="cover-stamp"><span>ONE NIGHT</span><b>∞</b><span>TO REMEMBER</span></div></div>
+<div class="overlay" id="overlay" hidden><div class="modal" id="modal"></div></div><div class="toast" id="toast" role="status"></div>
+</section><div class="below-note">A quiet little story about connection. Take your time; there are no wrong answers.</div></main><script src="game.js"></script>
+</body></html>
